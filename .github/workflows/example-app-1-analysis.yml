@@ -10,7 +10,7 @@ on:
       - 'src/example-app-1/phpstan.neon'
 
 jobs:
-  laravel-tests:
+  laravel-analysis:
     runs-on: ubuntu-latest
 
     steps:
