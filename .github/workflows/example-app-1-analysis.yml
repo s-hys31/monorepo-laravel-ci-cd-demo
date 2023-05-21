@@ -6,7 +6,7 @@ on:
       - main
       - develop
     paths:
-      - 'src/example-app-1/**.php'
+      - 'src/example-app-1/app/**.php'
       - 'src/example-app-1/phpstan.neon'
 
 jobs:
