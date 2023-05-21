@@ -1,4 +1,4 @@
-name: Test for example-app-1
+name: example-app-1 Test
 
 on:
   pull_request:
