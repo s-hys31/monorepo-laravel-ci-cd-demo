@@ -1,0 +1,54 @@
+name: example-app-1 PHPCS
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'src/example-app-1/app/**.php'
+      - 'src/example-app-1/config/**.php'
+      - 'src/example-app-1/database/**.php'
+      - 'src/example-app-1/resources/**.php'
+      - 'src/example-app-1/routes/**.php'
+      - 'src/example-app-1/tests/**.php'
+
+jobs:
+  laravel-phpcs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Copy .env
+        run: |
+          cp src/example-app-1/.env.example src/example-app-1/.env
+
+      - name: Cache Composer packages
+        uses: actions/cache@v2
+        with:
+          path: src/example-app-1/vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('src/example-app-1/composer.lock') }}
+
+      - name: Install Dependencies
+        run: |
+          cd src/example-app-1
+          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Generate key
+        run: cd src/example-app-1 && php artisan key:generate
+
+      - name: Directory Permissions
+        run: cd src/example-app-1 && chmod -R 777 storage bootstrap/cache
+
+      - name: Setup Reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest # Optional. [latest,nightly,v.X.Y.Z]
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run PHPCodeSniffer
+        run: |
+          cd src/example-app-1
+          vendor/bin/phpcs --standard=phpcs.xml ./ | reviewdog -f=phpcs -name="phpcodesniffer" -reporter=github-pr-check
