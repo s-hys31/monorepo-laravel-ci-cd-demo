@@ -10,8 +10,17 @@ on:
       - 'src/example-app-1/phpstan.neon'
 
 jobs:
+  setup-reviewdog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest # Optional. [latest,nightly,v.X.Y.Z]
+
   laravel-tests:
     runs-on: ubuntu-latest
+    needs: setup-reviewdog
 
     steps:
       - name: Checkout Repository
